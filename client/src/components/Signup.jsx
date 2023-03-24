@@ -1,38 +1,81 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "../CSS/Registration.css";
+import React, { useState } from "react";
+import axios from "axios";
+import '../css/Signup.css'
 
+function Signup() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-function Registration() {
-    return (
-        <div className="signup_body">
-            <div className="container">
-                <h1 className="signup_header">Sign-up</h1>
-                <form action="submit">
-                    <div className="form-field">
-                        <input type="text" name="fullname" required/>
-                        <label >Full Name</label>
-                    </div>
-                    <div className="form-field">
-                        <input type="text" name="email" required/>
-                        <label >Email</label>
-                    </div>
-                    <div className="form-field">
-                        <input type="tel" name="tel" required/>
-                        <label >Phone Number</label>
-                    </div>
-                    <div className="form-field">
-                        <input type="password" name="password" required/>
-                        <label >Password</label>
-                    </div>
-                    <button className="signup_btn" type="submit">Create Account</button>
-                    <div className="login_link">
-                        Already have Account? <Link className="signup_l" to="/login">Login</Link>
-                    </div>
-                </form>
-            </div>
-        </div>
-    )
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post("/register", {
+        username,
+        email,
+        password,
+      });
+      console.log(response.data);
+    } catch (error) {
+      setError(error.response?.data?.message || "Something went wrong");
+    }
+
+    setIsLoading(false);
+  };
+
+  return (
+    <form className="register-form" onSubmit={handleSubmit}>
+      <h2 className="form-title">Register</h2>
+      {error && <div className="form-error">{error}</div>}
+      <div className="form-group">
+        <label className="form-label" htmlFor="username">
+          Username
+        </label>
+        <input
+          className="form-input"
+          type="text"
+          id="username"
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label className="form-label" htmlFor="email">
+          Email
+        </label>
+        <input
+          className="form-input"
+          type="email"
+          id="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label className="form-label" htmlFor="password">
+          Password
+        </label>
+        <input
+          className="form-input"
+          type="password"
+          id="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+        />
+      </div>
+      <button className="form-button" type="submit" disabled={isLoading}>
+        {isLoading ? "Loading..." : "Register"}
+      </button>
+    </form>
+  );
 }
 
-export default Registration;
+export default Signup;

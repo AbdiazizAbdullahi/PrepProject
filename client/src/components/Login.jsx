@@ -1,31 +1,56 @@
-import React from "react";
-import { Link } from "react-router-dom"
-import "../CSS/Login.css"
+import React, { useState } from 'react';
+import axios from 'axios';
+import '../css/Login.css'
 
+function Login() {
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
 
-function Login(){
-    return(
-        <div className="login_body">
-            <div className="center">
-                <h1 className="login_header">Login</h1>
-                <form >
-                    <div className="txt_field">
-                        <input type="email" required/>
-                        <label >Email</label>
-                    </div>
-                    <div className="txt_field">
-                        <input type="password" required/>
-                        <label>Password</label>
-                    </div>
-                    <div className="forgot">Forgot Password?</div>
-                    <button className="login_btn" type="submit" >Login</button>
-                    <div className="signup_link">
-                        Not a member? <Link to="/register" className="login_l">Sign up</Link>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    axios.post('/login', {
+      username: usernameOrEmail,
+      email: usernameOrEmail,
+      password: password,
+    })
+      .then(response => {
+        // Handle successful login
+      })
+      .catch(error => {
+        setError(error.response.data.message);
+      });
+  };
+
+  return (
+    <form className="login-form" onSubmit={handleFormSubmit}>
+      <h2 className="form-title">Login</h2>
+      {error && <p className="form-error">{error}</p>}
+      <div className="form-group">
+        <label htmlFor="username-or-email" className="form-label">Username or Email</label>
+        <input
+          type="text"
+          id="username-or-email"
+          className="form-input"
+          value={usernameOrEmail}
+          onChange={(e) => setUsernameOrEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="password" className="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          className="form-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <button type="submit" className="form-button">Login</button>
+    </form>
+  );
 }
 
 export default Login;
